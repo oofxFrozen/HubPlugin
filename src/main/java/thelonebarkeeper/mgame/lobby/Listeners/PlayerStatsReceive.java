@@ -4,12 +4,12 @@ import com.google.common.io.ByteArrayDataInput;
 import com.google.common.io.ByteStreams;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.messaging.PluginMessageListener;
+import thelonebarkeeper.mgame.lobby.Data.Data;
+import thelonebarkeeper.mgame.lobby.Data.DataManager;
 
 import java.io.ByteArrayInputStream;
 import java.io.DataInputStream;
 import java.io.IOException;
-
-//TODO: make data receiver.   SPLIT STRING WITH ','. RECEIVE IT IN String.format("%s,%d,%b", playerName, kills, isWinner).
 
 public class PlayerStatsReceive implements PluginMessageListener {
 
@@ -29,8 +29,18 @@ public class PlayerStatsReceive implements PluginMessageListener {
 
             DataInputStream msgin = new DataInputStream(new ByteArrayInputStream(msgbytes));
             try {
-                String somedata =  msgin.readUTF(); // Read the data in the same way you wrote it
-                short somenumber = msgin.readShort();
+                String[] data =  msgin.readUTF().split(",");
+                String name = data[0];
+                int kills = Integer.parseInt(data[1]);
+                boolean isWinner = Boolean.getBoolean(data[2]);
+
+                Data playerData = DataManager.getPlayerData().get(name);
+                playerData.addGame();
+                if (isWinner)
+                    playerData.addWin();
+                playerData.addKills(kills);
+
+                DataManager.getPlayerData().put(name, playerData);
             } catch (IOException e) {
                 e.printStackTrace();
             }
