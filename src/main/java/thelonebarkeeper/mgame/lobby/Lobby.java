@@ -6,12 +6,9 @@ import org.yaml.snakeyaml.Yaml;
 import thelonebarkeeper.mgame.lobby.Data.Data;
 import thelonebarkeeper.mgame.lobby.Data.DataManager;
 import thelonebarkeeper.mgame.lobby.Listeners.GameJoinListener;
-import thelonebarkeeper.mgame.lobby.Listeners.PlayerChatListener;
-import thelonebarkeeper.mgame.lobby.Listeners.PlayerStatsReceive;
 
 import java.io.*;
 import java.util.HashMap;
-import java.util.Map;
 
 public final class Lobby extends JavaPlugin {
 
@@ -28,8 +25,9 @@ public final class Lobby extends JavaPlugin {
 
         setupListeners();
 
+        setupDirectories();
         try {
-            setupDirectories();
+            setupData();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -38,34 +36,37 @@ public final class Lobby extends JavaPlugin {
     @Override
     public void onDisable() {
         // Plugin shutdown logic
-
         this.getServer().getMessenger().unregisterOutgoingPluginChannel(this);
         this.getServer().getMessenger().unregisterIncomingPluginChannel(this);
-
-
-
-
     }
 
 
     private void setupListeners() {
         Bukkit.getPluginManager().registerEvents(new GameJoinListener(), this);
-        Bukkit.getPluginManager().registerEvents(new PlayerChatListener(), this);
 
-        this.getServer().getMessenger().registerOutgoingPluginChannel(this, "BungeeCord");
-        this.getServer().getMessenger().registerIncomingPluginChannel(this, "BungeeCord", new GameJoinListener());
-        this.getServer().getMessenger().registerIncomingPluginChannel(this, "BungeeCord", new PlayerStatsReceive());
+        this.getServer().getMessenger().registerOutgoingPluginChannel(this, "SkyWarsConnect");
     }
 
-    private void setupDirectories() throws IOException {
-        File playerdata = new File("./src/main/resources/player_data.yml");
+    public void setupDirectories() {
+        if (instance.getDataFolder().mkdir())
+            Bukkit.getServer().getLogger().info("Plugin directories are successfully created.");
+    }
+
+    public void setupData() throws IOException {
+
+        File playerdata = new File(this.getDataFolder().getPath() + "/player_data.yml/");
 
         boolean dataExists = playerdata.createNewFile();
 
         InputStream inputStream = new FileInputStream(playerdata);
 
         Yaml yaml = new Yaml();
-        Map<String, Object> dataRaw = yaml.load(inputStream);
+        HashMap<String, Object> dataRaw;
+        dataRaw = yaml.load(inputStream);
+
+        if (dataRaw == null)
+            return;
+
         for (String name : dataRaw.keySet()) {
             String[] values = dataRaw.get(name).toString().split(",");
             int kills = Integer.parseInt(values[0]);
@@ -77,8 +78,8 @@ public final class Lobby extends JavaPlugin {
         }
     }
 
-    private void saveData() throws FileNotFoundException {
-        PrintWriter writer = new PrintWriter("./src/main/resources/player_data.yml");
+    public void saveData() throws FileNotFoundException {
+        PrintWriter writer = new PrintWriter(this.getDataFolder().getPath() + "/player_data.yml/");
         Yaml yaml = new Yaml();
         HashMap<String, String> dataToSave = new HashMap<>();
         for (String name : DataManager.getPlayerData().keySet()) {

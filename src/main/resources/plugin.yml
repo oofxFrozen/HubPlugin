@@ -4,3 +4,7 @@ main: thelonebarkeeper.mgame.lobby.Lobby
 api-version: 1.17
 authors: [ oofxFrozen ]
 description: hub plugin
+commands:
+  test1:
+    description: testcommand
+    usage: /<command>
