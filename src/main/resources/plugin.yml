@@ -1,9 +1,9 @@
-name: Lobby
+name: SkyWarsLobby
 version: '${project.version}'
 main: thelonebarkeeper.mgame.lobby.Lobby
 api-version: 1.17
 authors: [ oofxFrozen ]
-description: hub plugin
+description: sw lobby plugin
 commands:
   test1:
     description: testcommand

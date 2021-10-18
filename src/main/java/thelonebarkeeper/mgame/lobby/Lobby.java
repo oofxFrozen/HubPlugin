@@ -3,9 +3,11 @@ package thelonebarkeeper.mgame.lobby;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.yaml.snakeyaml.Yaml;
-import thelonebarkeeper.mgame.lobby.Data.Data;
-import thelonebarkeeper.mgame.lobby.Data.DataManager;
-import thelonebarkeeper.mgame.lobby.Listeners.GameJoinListener;
+import thelonebarkeeper.mgame.lobby.data.Data;
+import thelonebarkeeper.mgame.lobby.data.DataManager;
+import thelonebarkeeper.mgame.lobby.listeners.GameJoinListener;
+import thelonebarkeeper.mgame.lobby.listeners.PlayerEvents;
+import thelonebarkeeper.mgame.lobby.managers.BossBarManager;
 
 import java.io.*;
 import java.util.HashMap;
@@ -24,8 +26,9 @@ public final class Lobby extends JavaPlugin {
         instance = this;
 
         setupListeners();
-
         setupDirectories();
+        BossBarManager.setupBossBar();
+
         try {
             setupData();
         } catch (IOException e) {
@@ -43,8 +46,10 @@ public final class Lobby extends JavaPlugin {
 
     private void setupListeners() {
         Bukkit.getPluginManager().registerEvents(new GameJoinListener(), this);
+        Bukkit.getPluginManager().registerEvents(new PlayerEvents(), this);
 
         this.getServer().getMessenger().registerOutgoingPluginChannel(this, "SkyWarsConnect");
+        this.getServer().getMessenger().registerOutgoingPluginChannel(this, "BungeeCord");
     }
 
     public void setupDirectories() {
@@ -87,4 +92,7 @@ public final class Lobby extends JavaPlugin {
         }
         yaml.dump(dataToSave, writer);
     }
+
+
+
 }

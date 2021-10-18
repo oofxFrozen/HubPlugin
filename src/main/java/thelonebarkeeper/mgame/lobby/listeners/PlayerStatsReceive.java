@@ -1,4 +1,4 @@
-package thelonebarkeeper.mgame.lobby.Listeners;
+package thelonebarkeeper.mgame.lobby.listeners;
 
 import com.google.common.io.ByteArrayDataInput;
 import com.google.common.io.ByteStreams;

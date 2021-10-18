@@ -1,4 +1,4 @@
-package thelonebarkeeper.mgame.lobby.Data;
+package thelonebarkeeper.mgame.lobby.data;
 
 import java.util.HashMap;
 
